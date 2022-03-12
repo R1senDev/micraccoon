@@ -24,7 +24,7 @@ let raccoon = {
 }
 
 let blinkingIntervalValue = 3000;
-let blinkingTime = 50;
+let blinkingTime = 100;
 let blinkingInterval = setInterval(function() {
 	raccoon.isBlinking = true;
 	setTimeout(function() {
@@ -32,46 +32,48 @@ let blinkingInterval = setInterval(function() {
 	}, blinkingTime);
 }, blinkingIntervalValue + blinkingTime);
 let volume = {
-	current: 0,
-	zero: 1,
-	speaking: {
-		absolute: 51,
-		relative: 50
+	current: {
+		relative: 0,
+		absolute: 0
 	},
-	screaming: {
-		absolute: 76,
-		relative: 75
-	}
-	update: setInterval(function() {
-		volume.speaking.relative = volume.speaking.absolute + volume.zero;
-		volume.screaming.relative = volume.screaming.absolute + volume.zero;
-	}, 50),
+	zero: 1,
+	speaking: 30,
+	screaming: 65,
 };
+
+volume.updateRelative = function() {
+	volume.current.relative = volume.current.absolute + volume.zero;
+}
 
 function redraw() {
 	context.fillStyle = backgroundColor;
 	context.fillRect(0, 0, canvas.width, canvas.height);
-	if (volume.current < volume.speaking.absolute) {
+	volume.updateRelative();
+	if (volume.current.relative < volume.speaking) {
 		if (raccoon.isBlinking) {
-			//context.drawImage(raccoonSprites.blinking, 0, 0, , , 0, 0, , );
+			context.drawImage(raccoonSprites.idleBlinking, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height);
 		} else {
-			//context.drawImage(raccoonSprites.idle, 0, 0, , , 0, 0, , );
+			context.drawImage(raccoonSprites.idle, 0, 0, raccoonSprites.idle.width, raccoonSprites.idle.height, 0, 0, raccoonSprites.idle.width, raccoonSprites.idle.height);
 		}
 	} else {
-		if (volume.current < volume.shouting.relative) {
+		if (volume.current.relative < volume.screaming) {
 			if (raccoon.isBlinking) {
-				//context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, , , 0, 0, , );
+				context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height);
 			} else {
-				//context.drawImage(raccoonSprites.openMouth, 0, 0, , , 0, 0, , );
+				context.drawImage(raccoonSprites.openMouth, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height);
 			}
 		} else {
 			if (raccoon.isBlinking) {
 				//context.drawImage(raccoonSprites.shoutingBlinking, 0, 0, , , 0, 0, , );
 			} else {
-				//context.drawImage(raccoonSprites.shouting, 0, 0, , , 0, 0, , );
+				//context.drawImage(raccoonSprites.screaming, 0, 0, , , 0, 0, , );
 			}
 		}
 	}
+}
+
+function calibrate() {
+	volume.zero = volume.current.absolute;
 }
 
 navigator.mediaDevices.getUserMedia({
@@ -94,11 +96,12 @@ navigator.mediaDevices.getUserMedia({
 		analyser.getByteFrequencyData(array);
 		const arraySum = array.reduce((a, value) => a + value, 0);
 		const average = arraySum / array.length;
-		volume.current = Math.round(average);
+		volume.current.absolute = Math.round(average);
 	};
 })
 .catch(function(err) {
 	console.error(err);
 });
 
+let redrawInterval = setInterval(redraw, 20);
 redraw();
