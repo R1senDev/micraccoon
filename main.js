@@ -34,18 +34,42 @@ let blinkingInterval = setInterval(function() {
 let volume = {
 	current: 0,
 	zero: 1,
-	speaking: 50,
-	screaming:75,
+	speaking: {
+		absolute: 51,
+		relative: 50
+	},
+	screaming: {
+		absolute: 76,
+		relative: 75
+	}
+	update: setInterval(function() {
+		volume.speaking.relative = volume.speaking.absolute + volume.zero;
+		volume.screaming.relative = volume.screaming.absolute + volume.zero;
+	}, 50),
 };
 
 function redraw() {
 	context.fillStyle = backgroundColor;
 	context.fillRect(0, 0, canvas.width, canvas.height);
-	if (volume.current <= volume.zero) {
+	if (volume.current < volume.speaking.absolute) {
 		if (raccoon.isBlinking) {
 			//context.drawImage(raccoonSprites.blinking, 0, 0, , , 0, 0, , );
 		} else {
 			//context.drawImage(raccoonSprites.idle, 0, 0, , , 0, 0, , );
+		}
+	} else {
+		if (volume.current < volume.shouting.relative) {
+			if (raccoon.isBlinking) {
+				//context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, , , 0, 0, , );
+			} else {
+				//context.drawImage(raccoonSprites.openMouth, 0, 0, , , 0, 0, , );
+			}
+		} else {
+			if (raccoon.isBlinking) {
+				//context.drawImage(raccoonSprites.shoutingBlinking, 0, 0, , , 0, 0, , );
+			} else {
+				//context.drawImage(raccoonSprites.shouting, 0, 0, , , 0, 0, , );
+			}
 		}
 	}
 }
