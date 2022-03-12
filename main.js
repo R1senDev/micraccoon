@@ -1,5 +1,21 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+const sensitivityCanvas = document.getElementById('sensitivityCanvas');
+const sensitivityContext = sensitivityCanvas.getContext('2d');
+
+
+const settingsBtn = document.getElementById('settings');
+const sensitivity1 = document.getElementById('sensitivity1');
+const sensitivity2 = document.getElementById('sensitivity2');
+const calibrateBtn = document.getElementById('calibrate');
+
+function switchSettings() {
+	if (document.getElementById('settings').hidden) {
+		document.getElementById('settings').hidden = false;
+	} else {
+		document.getElementById('settings').hidden = true;
+	}
+}
 
 let backgroundColor = 'green';
 
@@ -36,18 +52,20 @@ let volume = {
 		relative: 0,
 		absolute: 0
 	},
-	zero: 1,
+	zero: 0,
 	speaking: 30,
 	screaming: 65,
 };
 
 volume.updateRelative = function() {
-	volume.current.relative = volume.current.absolute + volume.zero;
+	volume.current.relative = volume.current.absolute - volume.zero;
 }
 
 function redraw() {
 	context.fillStyle = backgroundColor;
+	sensitivityContext.fillStyle = 'green';
 	context.fillRect(0, 0, canvas.width, canvas.height);
+	sensitivityContext.fillRect(0, 0, volume.current.relative, 20);
 	volume.updateRelative();
 	if (volume.current.relative < volume.speaking) {
 		if (raccoon.isBlinking) {
@@ -64,9 +82,9 @@ function redraw() {
 			}
 		} else {
 			if (raccoon.isBlinking) {
-				//context.drawImage(raccoonSprites.shoutingBlinking, 0, 0, , , 0, 0, , );
+				context.drawImage(raccoonSprites.screamingBlinking, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height);
 			} else {
-				//context.drawImage(raccoonSprites.screaming, 0, 0, , , 0, 0, , );
+				context.drawImage(raccoonSprites.screaming, 0, 0, raccoonSprites.screaming.width, raccoonSprites.screaming.height, 0, 0, raccoonSprites.screaming.width, raccoonSprites.screaming.height);
 			}
 		}
 	}

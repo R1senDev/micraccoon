@@ -6,3 +6,36 @@
 html, body {
 	height: 100%;
 }
+
+body {
+	padding: 10px;
+}
+
+#canvas {
+	margin: -10px;
+}
+
+.settingsBtn {
+	width: 30px;
+	height: 30px;
+}
+
+#settings {
+	position: absolute;
+	width: 100%;
+}
+
+.settings-main {
+	width: 150px;
+	margin-top: 20%;
+}
+
+.x {
+	float: right;
+	font-size: 30px;
+	margin-top: -35px;
+}
+
+input, .calibrate {
+	margin-top: 10px;
+}
