@@ -3,7 +3,6 @@ const context = canvas.getContext('2d');
 const sensitivityCanvas = document.getElementById('sensitivityCanvas');
 const sensitivityContext = sensitivityCanvas.getContext('2d');
 
-
 const settingsBtn = document.getElementById('settings');
 const sensitivity1 = document.getElementById('sensitivity1');
 const sensitivity2 = document.getElementById('sensitivity2');
@@ -17,7 +16,7 @@ function switchSettings() {
 	}
 }
 
-let backgroundColor = 'green';
+let backgroundColor = 'white';
 
 let raccoonSprites = {
 	idle: new Image(),
@@ -34,10 +33,24 @@ raccoonSprites.openMouthBlinking.src = 'openMouthBlinking.png';
 raccoonSprites.screaming.src = 'screaming.png';
 raccoonSprites.screamingBlinking.src = 'screamingBlinking.png';
 
-let raccoon = {
-	isBlinking: false,
-	mouthState: 0,
+class Raccoon_ {
+	constructor() {
+		this.isBlinking = false;
+		this.mouthState = 0;
+		this.sizeMultiplier = 0.5;
+	}
+	get width() {
+		return Math.round(raccoonSprites.idle.width * this.sizeMultiplier);
+	}
+	get height() {
+		return Math.round(raccoonSprites.idle.height * this.sizeMultiplier);
+	}
 }
+let raccoon = new Raccoon_();
+setTimeout(function() {
+	canvas.width = raccoon.width;
+	canvas.height = raccoon.height;
+}, 10);
 
 let blinkingIntervalValue = 3000;
 let blinkingTime = 100;
@@ -52,39 +65,41 @@ let volume = {
 		relative: 0,
 		absolute: 0
 	},
-	zero: 0,
-	speaking: 30,
-	screaming: 65,
+	zero: 1,
+	speaking: 40,
+	screaming: 60,
 };
 
 volume.updateRelative = function() {
-	volume.current.relative = volume.current.absolute - volume.zero;
+	volume.current.relative = volume.current.absolute + volume.zero;
 }
 
 function redraw() {
 	context.fillStyle = backgroundColor;
+	sensitivityContext.fillStyle = 'white';
+	sensitivityContext.fillRect(0, 0, sensitivityCanvas.width, sensitivityCanvas.height);
 	sensitivityContext.fillStyle = 'green';
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	sensitivityContext.fillRect(0, 0, volume.current.relative, 20);
 	volume.updateRelative();
 	if (volume.current.relative < volume.speaking) {
 		if (raccoon.isBlinking) {
-			context.drawImage(raccoonSprites.idleBlinking, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height);
+			context.drawImage(raccoonSprites.idleBlinking, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height, 0, 0, raccoon.width, raccoon.height);
 		} else {
-			context.drawImage(raccoonSprites.idle, 0, 0, raccoonSprites.idle.width, raccoonSprites.idle.height, 0, 0, raccoonSprites.idle.width, raccoonSprites.idle.height);
+			context.drawImage(raccoonSprites.idle, 0, 0, raccoonSprites.idle.width, raccoonSprites.idle.height, 0, 0, raccoon.width, raccoon.height);
 		}
 	} else {
 		if (volume.current.relative < volume.screaming) {
 			if (raccoon.isBlinking) {
-				context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height);
+				context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height, 0, 0, raccoon.width, raccoon.height);
 			} else {
-				context.drawImage(raccoonSprites.openMouth, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height);
+				context.drawImage(raccoonSprites.openMouth, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height, 0, 0, raccoon.width, raccoon.height);
 			}
 		} else {
 			if (raccoon.isBlinking) {
-				context.drawImage(raccoonSprites.screamingBlinking, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height);
+				context.drawImage(raccoonSprites.screamingBlinking, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height, 0, 0, raccoon.width, raccoon.height);
 			} else {
-				context.drawImage(raccoonSprites.screaming, 0, 0, raccoonSprites.screaming.width, raccoonSprites.screaming.height, 0, 0, raccoonSprites.screaming.width, raccoonSprites.screaming.height);
+				context.drawImage(raccoonSprites.screaming, 0, 0, raccoonSprites.screaming.width, raccoonSprites.screaming.height, 0, 0, raccoon.width, raccoon.height);
 			}
 		}
 	}

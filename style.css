@@ -27,15 +27,16 @@ body {
 
 .settings-main {
 	width: 150px;
-	margin-top: 20%;
-}
-
-.x {
-	float: right;
-	font-size: 30px;
-	margin-top: -35px;
 }
 
 input, .calibrate {
 	margin-top: 10px;
+}
+
+input {
+	width: 100px;
+}
+
+img {
+	margin-top: 50px;
 }
