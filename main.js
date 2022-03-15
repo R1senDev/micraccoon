@@ -47,10 +47,6 @@ class Raccoon_ {
 	}
 }
 let raccoon = new Raccoon_();
-setTimeout(function() {
-	canvas.width = raccoon.width;
-	canvas.height = raccoon.height;
-}, 10);
 
 let blinkingIntervalValue = 3000;
 let blinkingTime = 100;
@@ -74,14 +70,44 @@ volume.updateRelative = function() {
 	volume.current.relative = volume.current.absolute + volume.zero;
 }
 
+let instructionsHidden = false;
+function hideInstructions() {
+	if (!instructionsHidden) {
+		instructionsHidden = true;
+		let opacity = 0.4;
+		let opacityDescreaser = setInterval(function() {
+			if (opacity >= 0) {
+				opacity -= 0.005;
+				document.getElementById('instructions').style.opacity = opacity;
+			} else {
+				clearInterval(opacityDescreaser);
+			}
+		}, 10);
+	}
+}
+
 function redraw() {
 	context.fillStyle = backgroundColor;
 	sensitivityContext.fillStyle = 'white';
 	sensitivityContext.fillRect(0, 0, sensitivityCanvas.width, sensitivityCanvas.height);
-	sensitivityContext.fillStyle = 'green';
+	if (volume.current.absolute < 100) {
+		sensitivityContext.fillStyle = 'green';
+	} else {
+		if (volume.current.absolute < 150) {
+			sensitivityContext.fillStyle = 'yellow';
+		} else {
+			sensitivityContext.fillStyle = 'red';
+		}
+	}
 	context.fillRect(0, 0, canvas.width, canvas.height);
 	sensitivityContext.fillRect(0, 0, volume.current.relative, 20);
+	sensitivityContext.fillStyle = 'grey';
+	sensitivityContext.strokeRect(0, 0, sensitivityCanvas.width, sensitivityCanvas.height);
+	sensitivityContext.strokeRect(1, 1, sensitivityCanvas.width - 1, sensitivityCanvas.height - 1);
 	volume.updateRelative();
+	canvas.width = raccoon.width;
+	canvas.height = raccoon.height;
+	// Игра "найди костыль и ничего не трогай"
 	if (volume.current.relative < volume.speaking) {
 		if (raccoon.isBlinking) {
 			context.drawImage(raccoonSprites.idleBlinking, 0, 0, raccoonSprites.idleBlinking.width, raccoonSprites.idleBlinking.height, 0, 0, raccoon.width, raccoon.height);
@@ -90,12 +116,14 @@ function redraw() {
 		}
 	} else {
 		if (volume.current.relative < volume.screaming) {
+			hideInstructions();
 			if (raccoon.isBlinking) {
 				context.drawImage(raccoonSprites.openMouthBlinking, 0, 0, raccoonSprites.openMouthBlinking.width, raccoonSprites.openMouthBlinking.height, 0, 0, raccoon.width, raccoon.height);
 			} else {
 				context.drawImage(raccoonSprites.openMouth, 0, 0, raccoonSprites.openMouth.width, raccoonSprites.openMouth.height, 0, 0, raccoon.width, raccoon.height);
 			}
 		} else {
+			hideInstructions();
 			if (raccoon.isBlinking) {
 				context.drawImage(raccoonSprites.screamingBlinking, 0, 0, raccoonSprites.screamingBlinking.width, raccoonSprites.screamingBlinking.height, 0, 0, raccoon.width, raccoon.height);
 			} else {
@@ -105,8 +133,16 @@ function redraw() {
 	}
 }
 
-function calibrate() {
-	volume.zero = volume.current.absolute;
+function calibrate(reset) {
+	if (!reset) {
+		volume.zero = volume.current.absolute;
+		volume.updateRelative();
+		console.log(`Calibrated! Now volume.zero == ${volume.zero}.`);
+	} else {
+		volume.zero = 0;
+		volume.updateRelative();
+		console.log(`Reset! Now volume.zero == ${volume.zero}.`);
+	}
 }
 
 navigator.mediaDevices.getUserMedia({
@@ -133,7 +169,9 @@ navigator.mediaDevices.getUserMedia({
 	};
 })
 .catch(function(err) {
-	console.error(err);
+	if (confirm('Нужно разрешить доступ к микрофону. Обновить страницу для повторного запроса разарешения?')) {
+		window.location.reload();
+	}
 });
 
 let redrawInterval = setInterval(redraw, 20);

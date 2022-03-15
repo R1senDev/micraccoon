@@ -11,7 +11,7 @@
 
 	<div id="settings" hidden>
 		<div class="settings-main">
-			<input type="range" id="sensitivity1" min="0" max="100" value="40" step="1" onchange="
+				<input type="range" id="sensitivity1" min="0" max="100" value="40" step="1" onchange="
 			if (sensitivity2.value < sensitivity1.value) {
 				sensitivity2.value = sensitivity1.value;
 			}
@@ -25,11 +25,13 @@
 			volume.speaking = sensitivity1.value;
 			volume.screaming = sensitivity2.value;
 			"><br>
-			<canvas id="sensitivityCanvas" width="100" height="20">
-			<button class="calibrate" onclick="calibrate()">Calibrate</button><br>
-			<p class="note">Note: be perfectly silent when clicking "Calibrate" button</p>
+			<canvas id="sensitivityCanvas" width="100" height="20"></canvas>
+			<button class="calibrate" onclick="calibrate(false)">Калибровка</button>	
+			<button class="reset" onclick="calibrate(true)">Сброс</button><br>
+			<p class="note">Примечание: будь абсолютно бесшумен при нажатии кнопки "Калибровка"</p>
 		</div>
-	</div>
+	</div><br>
+	<h2 id="instructions"><b>ProTip!</b> Говори в микрофон: чтобы сделать чувствительность меньше, открой настройки и сдвинь оба слайдера левее. И наоборот.</h2>
 
 	<script type="text/javascript" src="main.js"></script>
 </body>

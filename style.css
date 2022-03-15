@@ -11,18 +11,20 @@ body {
 	padding: 10px;
 }
 
-#canvas {
-	margin: -10px;
+#instructions {
+	font-size: 15px;
+	opacity: 0.4;
+	margin-top: 90px;
 }
 
 .settingsBtn {
 	width: 30px;
 	height: 30px;
+	opacity: 0.3;
 }
 
 #settings {
-	position: absolute;
-	width: 100%;
+	width: 90%;
 }
 
 .settings-main {
@@ -39,4 +41,16 @@ input {
 
 img {
 	margin-top: 50px;
+}
+
+#sensitivityCanvas {
+	margin-top: 10px;
+}
+
+p {
+	float: left;
+}
+
+.note {
+	margin-top: 10px;
 }
